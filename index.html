@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
     <title>GameZone — Онлайн ігри</title>
 </head>
 <body>
@@ -23,56 +22,69 @@
 
     <main>
 
+        <section id="recommended">
+    <h2>Рекомендовані ігри</h2>
+    <p>Список рекомендованих ігор генерується випадково при кожному оновленні сторінки.</p>
+    <button id="toggle-recommended">Сховати рекомендації</button>
+    <div id="recommended-list" class="recommended-container"></div>
+        </section>
+
         <section id="games">
     <h2>Ігри</h2>
     <p>Оберіть гру та приєднуйтесь до тисяч гравців онлайн.</p>
 
     <div class="games-container">
 
-        <article class="game-card">
+        <article class="game-card" data-game="cs2">
             <img src="images/cs2.jpg" alt="Counter Strike 2">
             <h3>Counter Strike 2</h3>
             <p><strong>Жанр:</strong> Шутер</p>
             <p><strong>Рейтинг:</strong> 4.8 / 5</p>
             <p><strong>Активних гравців:</strong> 125 000</p>
+            <button class="favorite-btn">Додати до улюблених</button>
         </article>
 
-        <article class="game-card">
+        <article class="game-card" data-game="dota2">
             <img src="images/dota2.jpg" alt="Dota 2">
             <h3>Dota 2</h3>
             <p><strong>Жанр:</strong> MOBA</p>
             <p><strong>Рейтинг:</strong> 4.6 / 5</p>
             <p><strong>Активних гравців:</strong> 98 000</p>
+            <button class="favorite-btn">Додати до улюблених</button>
         </article>
 
-        <article class="game-card">
+        <article class="game-card" data-game="fortnite">
             <img src="images/fortnite.jpg" alt="Fortnite">
             <h3>Fortnite</h3>
             <p><strong>Жанр:</strong> Battle Royale</p>
             <p><strong>Рейтинг:</strong> 4.5 / 5</p>
             <p><strong>Активних гравців:</strong> 210 000</p>
+            <button class="favorite-btn">Додати до улюблених</button>
         </article>
 
-        <article class="game-card">
+        <article class="game-card" data-game="valorant">
             <img src="images/valorant.jpg" alt="Valorant">
             <h3>Valorant</h3>
             <p><strong>Жанр:</strong> Тактичний шутер</p>
             <p><strong>Рейтинг:</strong> 4.7 / 5</p>
             <p><strong>Активних гравців:</strong> 150 000</p>
+            <button class="favorite-btn">Додати до улюблених</button>
         </article>
-        <article class="game-card">
+        <article class="game-card" data-game="apex">
             <img src="images/APEX.jpg" alt="Apex Legends">
             <h3>Apex Legends</h3>
             <p><strong>Жанр:</strong> Королівська битва</p>
             <p><strong>Рейтинг:</strong> 4.2 / 5</p>
             <p><strong>Активних гравців:</strong> 50 000</p>
+            <button class="favorite-btn">Додати до улюблених</button>
         </article>
-        <article class="game-card">
+        <article class="game-card" data-game="pubg">
             <img src="images/PUBG.jpg" alt="PUBG">
             <h3>PUBG</h3>
             <p><strong>Жанр:</strong> Королівська битва</p>
             <p><strong>Рейтинг:</strong> 4.4 / 5</p>
             <p><strong>Активних гравців:</strong> 75 000</p>
+            <button class="favorite-btn">Додати до улюблених</button>
         </article>
 
     </div>
@@ -138,15 +150,35 @@
                 <li>⭐ Топ-гравець місяця</li>
             </ul>
         </div>
-
+        
+        
+        <div class="profile-card">
+            <h3>Прогрес до наступної нагороди</h3>
+            <div class="progress-container">
+                <div id="progress-bar"></div>
+            </div>
+            <p id="progress-text"></p>
+        </div>
     </div>
         </section>
 
+        <section id="comments">
+    <h2>Коментарі</h2>
+    <p>Залиште свій відгук про платформу.</p>
+
+    <div class="comment-form">
+        <input type="text" id="user-name" placeholder="Введіть ваше ім'я">
+        <textarea id="user-comment" placeholder="Введіть ваш коментар"></textarea>
+        <button id="submit-comment">Надіслати</button>
+    </div>
+
+        <div id="comments-list"></div>
+        </section>
     </main>
 
     <footer>
         <p>Контакти: info@gamezone.com | +380000000000</p>
     </footer>
-
+<script src="script.js"></script>
 </body>
 </html>
