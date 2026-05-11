@@ -3,7 +3,9 @@ const cors = require("cors");
 const admin = require("firebase-admin");
 
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-
+console.log("SERVICE ACCOUNT TYPE:", serviceAccount.type);
+console.log("SERVICE ACCOUNT EMAIL:", serviceAccount.client_email);
+console.log("SERVICE ACCOUNT PROJECT:", serviceAccount.project_id);
 serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
 
 admin.initializeApp({
