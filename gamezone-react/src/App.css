@@ -294,3 +294,91 @@ h2 {
   margin-bottom: 10px;
   color: #4caf50;
 }
+
+.auth-page {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.auth-form {
+  background-color: #1e1e1e;
+  padding: 25px;
+  border-radius: 12px;
+}
+
+.auth-form input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.auth-buttons button {
+  padding: 12px 18px;
+  border: none;
+  border-radius: 8px;
+  background-color: #4caf50;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.auth-buttons button:hover {
+  background-color: #45a049;
+}
+
+.auth-message {
+  margin-top: 20px;
+  font-weight: bold;
+}
+
+.auth-status {
+  margin-top: 25px;
+  padding: 15px;
+  background-color: #2a2a2a;
+  border-radius: 10px;
+}
+
+.rating-block {
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid #333;
+}
+
+.rating-block h4 {
+  margin-bottom: 10px;
+}
+
+.stars {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+.star {
+  color: #777;
+  transition: color 0.2s ease;
+}
+
+.star:hover {
+  color: gold;
+}
+
+.active-star {
+  color: gold;
+}
+
+.rating-text {
+  margin-top: 10px;
+  font-size: 14px;
+}

@@ -1,67 +1,64 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { collection, getDocs } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
+import { db, auth } from '../firebase';
 import GameCard from '../components/GameCard';
 
 function GamesPage() {
-  const initialGames = [
-    {
-      id: 1,
-      title: 'Counter Strike 2',
-      genre: 'Шутер',
-      rating: 4.8,
-      players: '125 000',
-      image: '/images/cs2.jpg',
-    },
-    {
-      id: 2,
-      title: 'Dota 2',
-      genre: 'MOBA',
-      rating: 4.6,
-      players: '98 000',
-      image: '/images/dota2.jpg',
-    },
-    {
-      id: 3,
-      title: 'Fortnite',
-      genre: 'Королівська битва',
-      rating: 4.5,
-      players: '210 000',
-      image: '/images/fortnite.jpg',
-    },
-    {
-      id: 4,
-      title: 'Valorant',
-      genre: 'Тактичний шутер',
-      rating: 4.7,
-      players: '150 000',
-      image: '/images/valorant.jpg',
-    },
-    {
-      id: 5,
-      title: 'Apex Legends',
-      genre: 'Королівська битва',
-      rating: 4.2,
-      players: '50 000',
-      image: '/images/APEX.jpg',
-    },
-    {
-      id: 6,
-      title: 'PUBG',
-      genre: 'Королівська битва',
-      rating: 4.4,
-      players: '75 000',
-      image: '/images/PUBG.jpg',
-    },
-  ];
-
-  function getRandomGames(gamesArray, count) {
-    const shuffled = [...gamesArray].sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, count);
-  }
-
-  const [games, setGames] = useState(initialGames);
+  const [games, setGames] = useState([]);
   const [favoriteGameIds, setFavoriteGameIds] = useState([]);
   const [showRecommended, setShowRecommended] = useState(true);
-  const [recommendedGames] = useState(getRandomGames(initialGames, 3));
+  const [recommendedGames, setRecommendedGames] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [userRatings, setUserRatings] = useState({});
+  const [averageRatings, setAverageRatings] = useState({});
+
+  useEffect(() => {
+    async function fetchGames() {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'games'));
+        const gamesData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        setGames(gamesData);
+
+        const shuffled = [...gamesData].sort(() => Math.random() - 0.5);
+        setRecommendedGames(shuffled.slice(0, 3));
+
+        for (const game of gamesData) {
+          fetchAverageRating(game.id);
+        }
+      } catch (error) {
+        console.error('Помилка завантаження ігор:', error);
+      }
+    }
+
+    fetchGames();
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  async function fetchAverageRating(gameId) {
+    try {
+      const response = await fetch(`http://localhost:5050/api/ratings/${gameId}`);
+      const data = await response.json();
+
+      setAverageRatings((prev) => ({
+        ...prev,
+        [gameId]: data.averageRating,
+      }));
+    } catch (error) {
+      console.error('Помилка отримання середнього рейтингу:', error);
+    }
+  }
 
   function sortByRating() {
     const sortedGames = [...games].sort((a, b) => b.rating - a.rating);
@@ -81,11 +78,38 @@ function GamesPage() {
     setShowRecommended((prev) => !prev);
   }
 
+  async function handleRateGame(gameId, stars) {
+    if (!currentUser) return;
+
+    try {
+      await fetch('http://localhost:5050/api/ratings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          gameId,
+          rating: stars,
+          userEmail: currentUser.email,
+        }),
+      });
+
+      setUserRatings((prevRatings) => ({
+        ...prevRatings,
+        [gameId]: stars,
+      }));
+
+      fetchAverageRating(gameId);
+    } catch (error) {
+      console.error('Помилка надсилання оцінки:', error);
+    }
+  }
+
   return (
     <div>
       <section className="recommended-section">
         <h2>Рекомендовані ігри</h2>
-        <p>Список рекомендованих ігор генерується випадково при кожному оновленні сторінки.</p>
+        <p>Список рекомендованих ігор генерується випадково при завантаженні сторінки.</p>
 
         <button className="toggle-btn" onClick={toggleRecommended}>
           {showRecommended ? 'Сховати рекомендації' : 'Показати рекомендації'}
@@ -104,6 +128,10 @@ function GamesPage() {
                 image={game.image}
                 isFavorite={favoriteGameIds.includes(game.id)}
                 onToggleFavorite={toggleFavorite}
+                isAuthenticated={!!currentUser}
+                userRating={userRatings[game.id] || 0}
+                averageRating={averageRatings[game.id] || 0}
+                onRateGame={handleRateGame}
               />
             ))}
           </div>
@@ -130,6 +158,10 @@ function GamesPage() {
               image={game.image}
               isFavorite={favoriteGameIds.includes(game.id)}
               onToggleFavorite={toggleFavorite}
+              isAuthenticated={!!currentUser}
+              userRating={userRatings[game.id] || 0}
+              averageRating={averageRatings[game.id] || 0}
+              onRateGame={handleRateGame}
             />
           ))}
         </div>

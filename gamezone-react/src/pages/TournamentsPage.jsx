@@ -1,22 +1,28 @@
+import { useEffect, useState } from 'react';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../firebase';
 import TournamentCard from '../components/TournamentCard';
 
 function TournamentsPage() {
-  const tournaments = [
-    {
-      id: 1,
-      title: 'CS2 Weekly Cup',
-      date: '28 лютого 2026',
-      prize: '500$',
-      rules: ['Мінімальний рівень: 10', 'Команди 5x5'],
-    },
-    {
-      id: 2,
-      title: 'Dota 2 Pro League',
-      date: '5 березня 2026',
-      prize: '1000$',
-      rules: ['Тільки рейтингові гравці', 'Double Elimination'],
-    },
-  ];
+  const [tournaments, setTournaments] = useState([]);
+
+  useEffect(() => {
+    async function fetchTournaments() {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'tournaments'));
+        const tournamentsData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        setTournaments(tournamentsData);
+      } catch (error) {
+        console.error('Помилка завантаження турнірів:', error);
+      }
+    }
+
+    fetchTournaments();
+  }, []);
 
   return (
     <div>
@@ -30,7 +36,7 @@ function TournamentsPage() {
             title={tournament.title}
             date={tournament.date}
             prize={tournament.prize}
-            rules={tournament.rules}
+            rules={['Інформація завантажена з Firebase']}
           />
         ))}
       </div>
