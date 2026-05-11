@@ -10,40 +10,12 @@ import {
 import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "../firebase";
 
-const [protectedMessage, setProtectedMessage] = useState("");
-async function handleProtectedRequest() {
-  if (!currentUser) {
-    setProtectedMessage("Спочатку потрібно увійти в систему");
-    return;
-  }
-
-  try {
-    const idToken = await currentUser.getIdToken();
-
-    const response = await fetch("http://localhost:5050/api/protected", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${idToken}`,
-      },
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      setProtectedMessage(data.error || "Помилка доступу");
-      return;
-    }
-
-    setProtectedMessage(`${data.message}. Користувач: ${data.user.email}`);
-  } catch (error) {
-    setProtectedMessage(`Помилка запиту: ${error.message}`);
-  }
-}
 function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
   const [message, setMessage] = useState("");
+  const [protectedMessage, setProtectedMessage] = useState("");
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -133,6 +105,38 @@ function AuthPage() {
     }
   }
 
+  async function handleProtectedRequest() {
+    if (!currentUser) {
+      setProtectedMessage("Спочатку потрібно увійти в систему");
+      return;
+    }
+
+    try {
+      const idToken = await currentUser.getIdToken();
+
+      const response = await fetch(
+        "https://web-bilynskyinazar.onrender.com/api/protected",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${idToken}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setProtectedMessage(data.error || "Помилка доступу");
+        return;
+      }
+
+      setProtectedMessage(`${data.message}. Користувач: ${data.user.email}`);
+    } catch (error) {
+      setProtectedMessage(`Помилка запиту: ${error.message}`);
+    }
+  }
+
   return (
     <div className="auth-page">
       <h2>Реєстрація та вхід</h2>
@@ -157,7 +161,9 @@ function AuthPage() {
           <button onClick={handleLogin}>Увійти</button>
           <button onClick={handleGoogleLogin}>Увійти через Google</button>
           <button onClick={handleLogout}>Вийти</button>
-          <button onClick={handleProtectedRequest}>Перевірити захищений маршрут</button>
+          <button onClick={handleProtectedRequest}>
+            Перевірити захищений маршрут
+          </button>
         </div>
 
         <p className="auth-message">{message}</p>

@@ -48,7 +48,7 @@ function GamesPage() {
 
   async function fetchAverageRating(gameId) {
     try {
-      const response = await fetch(`http://localhost:5050/api/ratings/${gameId}`);
+      const response = await fetch(`https://web-bilynskyinazar.onrender.com/api/ratings/${gameId}`);
       const data = await response.json();
 
       setAverageRatings((prev) => ({
@@ -82,7 +82,7 @@ function GamesPage() {
     if (!currentUser) return;
 
     try {
-      await fetch('http://localhost:5050/api/ratings', {
+      await fetch('https://web-bilynskyinazar.onrender.com/api/ratings', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
